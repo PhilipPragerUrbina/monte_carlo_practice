@@ -1,6 +1,7 @@
 package monte.carlo;
 
 import java.util.ArrayList;
+
 //represent a data table
 public class Table<X,Y> {
     //x and y data
@@ -39,15 +40,26 @@ public class Table<X,Y> {
         return s;
     }
 
-    public void outputPlot(){
+    //create a plot. Specify to lambda functions with specified template input types, that return a single double value used for plotting
+    //example usage with int and double: a.getTable().outputPlot((Integer x)-> x,(Double y) -> y ,1);
+    //multiplier make the graph bigger
+    public void outputPlot(getNumericalValue<X> x_numerical_value, getNumericalValue<Y> y_numerical_value, int multiplier){
         String filename = data_x.get(0).getClass().getName() + "_" + data_y.get(0).getClass().getName() + ".PNG";
-        //todo get domain and range
-        int width = data_x.size();
-        int height = 10;
-        Graph graph = new Graph(width,height);
+        //find max x and y values for domain and range
+        int width = 0;
+        int height = 0;
         for (int i = 0; i < data_x.size(); i++) {
-            //todo make plot generic
-            graph.plot(Integer.parseInt(data_x.get(i).toString()),Double.parseDouble(data_y.get(i).toString()) );
+            //round up to ints
+            int x = (int)x_numerical_value.getValue(data_x.get(i))+1;
+            int y = (int)y_numerical_value.getValue(data_y.get(i))+1;
+            if(x > width) {width = x;}
+            if(y > height){height = y;}
+        }
+
+
+        Graph graph = new Graph(width * multiplier,height * multiplier);
+        for (int i = 0; i < data_x.size(); i++) {
+            graph.plot(x_numerical_value.getValue(data_x.get(i))*multiplier,y_numerical_value.getValue(data_y.get(i))*multiplier );
 
         }
         graph.savePNG(filename);
