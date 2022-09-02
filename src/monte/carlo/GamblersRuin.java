@@ -15,7 +15,7 @@ public class GamblersRuin {
     private int punishment;
 
     //data table
-    private Table<Integer, Double> table;
+    private Table<Integer, MultiData> table;
 
     //initial settings
     public GamblersRuin(int start_money, int reward, int punishment, int goal_amount, int num_simulations){
@@ -80,13 +80,18 @@ public class GamblersRuin {
     }
 
 
-    //fill table with increasing number of steps
-    public void fillTable(int rows){
-
+    //fill table with increasing goal value
+    public void fillTableGoal(int start, int end, int step){
+        for(int i = start; i < end; i+= step){
+            double probability = runSuccessSimulation();
+            double bets = runBetSimulation();
+            table.addDataPoint(i,new MultiData(bets,probability));
+        }
 
     }
+
     //get the table
-    public Table<Integer,Double> getTable(){
+    public Table<Integer,MultiData> getTable(){
         return table;
     }
 }

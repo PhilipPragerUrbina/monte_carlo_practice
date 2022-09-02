@@ -4,9 +4,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        GamblersRuin ruin =  new GamblersRuin(1000);
-        System.out.println(ruin.runSuccessSimulation());
-        System.out.println(ruin.runBetSimulation());
+        GamblersRuin ruin =  new GamblersRuin(100);
+        ruin.fillTableGoal(50,250,5);
+        System.out.println("filled");
+        ruin.getTable().output();
 
         /*
 	ParticleDiffusion a =  new ParticleDiffusion(1.0, 1000);
