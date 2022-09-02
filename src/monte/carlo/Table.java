@@ -38,4 +38,19 @@ public class Table<X,Y> {
         }
         return s;
     }
+
+    public void outputPlot(){
+        String filename = data_x.get(0).getClass().getName() + "_" + data_y.get(0).getClass().getName() + ".JPG";
+        //todo get domain and range
+        int width = data_x.size();
+        int height = 10;
+        Graph graph = new Graph(width,height);
+        for (int i = 0; i < data_x.size(); i++) {
+            //todo make plot generic
+            graph.plot(Integer.parseInt(data_x.get(i).toString()),(int)Double.parseDouble(data_y.get(i).toString()) );
+
+        }
+        graph.saveJPG(filename);
+
+    }
 }
