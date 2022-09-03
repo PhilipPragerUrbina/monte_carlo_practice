@@ -83,6 +83,7 @@ public class GamblersRuin {
     //fill table with increasing goal value
     public void fillTableGoal(int start, int end, int step){
         for(int i = start; i < end; i+= step){
+            goal_amount = i;
             double probability = runSuccessSimulation();
             double bets = runBetSimulation();
             table.addDataPoint(i,new MultiData(bets,probability));
