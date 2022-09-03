@@ -1,10 +1,6 @@
 package monte.carlo;
 
-import java.util.Random;
 
-//amount is # of sims to average
-//step is how much to move each step
-//rows or steps in number of steps to move
 public class GamblersRuin {
 
     //settings
