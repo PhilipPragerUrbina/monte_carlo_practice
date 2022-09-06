@@ -1,68 +1,119 @@
 package monte.carlo;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 //represent a data table
-public class Table<X,Y> {
-    //x and y data
-    private ArrayList<X> data_x;
-    private ArrayList<Y> data_y;
-    public Table(){
-        data_x = new ArrayList<>();
-        data_y = new ArrayList<>();
+public class Table {
+    //data
+    private String[] labels;
+    private ArrayList<Data>[] data;
+    private int length = 0;
+    public Table(String... labels){
+        //get labels
+        this.labels = labels;
+        //create data columns
+        data = new ArrayList[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            data[i] = new ArrayList<>();
+        }
     }
 
-    //add data
-    public void addDataPoint(X x, Y y){
-        data_y.add(y);
-        data_x.add(x);
+    public int getTableWidth(){
+        return labels.length;
     }
+
+    //add data, if too little data, fill in the rest of the values with empty data
+    public void addDataPoint(Data... values){
+        if(values.length > getTableWidth()){
+            System.err.println("Too many values for data table");
+            return;
+        }
+        //add data
+        for (int i = 0; i < values.length; i++) {
+            data[i].add(values[i]);
+        }
+        //fill in empty data
+        for (int i = values.length; i < getTableWidth(); i++) {
+            data[i].add(new EmptyData());
+        }
+        length++;
+    }
+
 
     //output table
     public void output(){
-        for (int i = 0; i < data_x.size(); i++) {
-            System.out.println(data_x.get(i) + " , " + data_y.get(i) );
+        //output labels
+        for (String label : labels) {
+            System.out.print(label + " , ");
+        }
+        System.out.print('\n');
+        //output data
+        for (int i = 0; i <length; i++) {
+            for (ArrayList<Data> array : data) {
+                System.out.print(array.get(i).toStringValue() + " , ");
+            }
+            System.out.print('\n');
         }
     }
 
-    public void outputCoords(){
-        for (int i = 0; i < data_x.size(); i++) {
-            System.out.println("(" + data_x.get(i) + ',' + data_y.get(i) + ')');
+    //output table nicely
+    public void outputFormatted(int target_cell_width){
+        //output labels
+        for (String label : labels) {
+            System.out.print(" | " + label); //use nice dividers
+            for (int i = 0; i < target_cell_width-label.length(); i++) {
+                System.out.print(' '); //fill in space until target width for even table
+            }
+        }
+        System.out.println(" | ");
+        //output data
+        for (int i = 0; i <length; i++) {
+            for (ArrayList<Data> array : data) {
+                System.out.print(" | ");
+                System.out.print(array.get(i).toStringValue());
+                for (int g = 0; g < target_cell_width-array.get(i).toStringValue().length(); g++) {
+                    System.out.print(' ');
+                }
+            }
+            System.out.println(" | ");
         }
     }
 
-    @Override
-    public String toString() {
-        String s = "";
-        for (int i = 0; i < data_x.size(); i++) {
-            s += (data_x.get(i) + " , " + data_y.get(i) + "\n");
+    //get id from label
+    int getIDFromLabel(String label){
+        for (int i = 0; i < labels.length; i++) {
+            if(labels[i].equals(label)){
+                return i;
+            }
         }
-        return s;
+        return 0;
     }
 
-    //create a plot. Specify to lambda functions with specified template input types, that return a single double value used for plotting
-    //example usage with int and double: a.getTable().outputPlot((Integer x)-> x,(Double y) -> y ,1);
     //multiplier make the graph bigger
-    public void outputPlot(getNumericalValue<X> x_numerical_value, getNumericalValue<Y> y_numerical_value, int multiplier){
-        String filename = data_x.get(0).getClass().getName() + "_" + data_y.get(0).getClass().getName() + ".PNG";
+    public void outputPlot(String independent_label, String dependent_label, int multiplier){
+        //create filename
+        String filename = independent_label + "_" + dependent_label + ".PNG";
+        //get data
+        ArrayList<Data> x_data = data[getIDFromLabel(independent_label)];
+        ArrayList<Data> y_data = data[getIDFromLabel(dependent_label)];
+
         //find max x and y values for domain and range
+        //todo allow negative values
         int width = 0;
         int height = 0;
-        for (int i = 0; i < data_x.size(); i++) {
+        for (int i = 0; i < length; i++) {
             //round up to ints
-            int x = (int)x_numerical_value.getValue(data_x.get(i))+1;
-            int y = (int)y_numerical_value.getValue(data_y.get(i))+1;
+            int x = (int)x_data.get(i).toNumericalValue()+1;
+            int y =  (int)y_data.get(i).toNumericalValue()+1;
             if(x > width) {width = x;}
             if(y > height){height = y;}
         }
-
-
         Graph graph = new Graph(width * multiplier,height * multiplier);
-        for (int i = 0; i < data_x.size(); i++) {
-            graph.plot(x_numerical_value.getValue(data_x.get(i))*multiplier,y_numerical_value.getValue(data_y.get(i))*multiplier );
+        for (int i = 0; i < length; i++) {
+            graph.plot(x_data.get(i).toNumericalValue()*multiplier,y_data.get(i).toNumericalValue()*multiplier );
 
         }
         graph.savePNG(filename);
-
     }
 }

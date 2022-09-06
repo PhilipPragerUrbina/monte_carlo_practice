@@ -10,13 +10,13 @@ public class ParticleDiffusion {
     private int num_simulations;
 
     //data table
-    private Table<Integer, Double> table;
+    private Table table;
 
     //initial settings
     public ParticleDiffusion(double step , int num_simulations){
         this.num_simulations = num_simulations;
         this.step = step;
-        table = new Table<>();
+        table = new Table("Num steps", "Distance");
     }
 
     //run a single simulation
@@ -28,11 +28,11 @@ public class ParticleDiffusion {
     public void fillTable(int rows){
 
         for (int i = 0; i < rows; i++) {
-            table.addDataPoint(i, calculateAverage(step,i,num_simulations));
+            table.addDataPoint(new IntData(i), new FloatingPointData(calculateAverage(step,i,num_simulations)));
         }
     }
     //get the table
-    public Table<Integer,Double> getTable(){
+    public Table getTable(){
       return table;
     }
 

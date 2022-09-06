@@ -3,7 +3,7 @@ package monte.carlo;
 import java.util.Random;
 
 //3d vector class
-public class Vector3 {
+public class Vector3 implements Data{
     //values
     public double x;
     public double y;
@@ -85,6 +85,16 @@ public class Vector3 {
     //move in direction by distance
     Vector3 move(Vector3 dir, double dist){
         return this.add(dir.multiply(new Vector3(dist)));
+    }
+
+    @Override
+    public double toNumericalValue() {
+        return x;
+    }
+
+    @Override
+    public String toStringValue() {
+        return toString();
     }
 
     @Override

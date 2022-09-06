@@ -6,8 +6,8 @@ public class Main {
 
         GamblersRuin ruin =  new GamblersRuin(1000);
         ruin.fillTableGoal(50,250,5);
-        System.out.println("Goal , Bets , Probability");
-        ruin.getTable().output();
+
+        ruin.getTable().outputFormatted(11);
 
         /*
 	ParticleDiffusion a =  new ParticleDiffusion(1.0, 1000);

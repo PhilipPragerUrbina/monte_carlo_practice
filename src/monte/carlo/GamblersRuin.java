@@ -11,7 +11,7 @@ public class GamblersRuin {
     private int punishment;
 
     //data table
-    private Table<Integer, MultiData> table;
+    private Table table;
 
     //initial settings
     public GamblersRuin(int start_money, int reward, int punishment, int goal_amount, int num_simulations){
@@ -20,7 +20,7 @@ public class GamblersRuin {
         this.goal_amount = goal_amount;
         this.punishment = punishment;
         this.reward = reward;
-        table = new Table<>();
+        table = new Table("Target","Bets","Probability");
     }
     public GamblersRuin(int num_simulations){
         this(50,1,-1,250,num_simulations);
@@ -82,13 +82,13 @@ public class GamblersRuin {
             goal_amount = i;
             double probability = runSuccessSimulation();
             double bets = runBetSimulation();
-            table.addDataPoint(i,new MultiData(bets,probability));
+            table.addDataPoint(new IntData(i),new FloatingPointData(bets),new FloatingPointData(probability));
         }
 
     }
 
     //get the table
-    public Table<Integer,MultiData> getTable(){
+    public Table getTable(){
         return table;
     }
 }
