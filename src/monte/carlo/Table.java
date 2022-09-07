@@ -91,7 +91,8 @@ public class Table {
     }
 
     //multiplier make the graph bigger
-    public void outputPlot(String independent_label, String dependent_label, int multiplier){
+    public void outputPlot(String independent_label, String dependent_label, double multiplier){
+
         //create filename
         String filename = independent_label + "_" + dependent_label + ".PNG";
         //get data
@@ -100,18 +101,29 @@ public class Table {
 
         //find max x and y values for domain and range
         //todo allow negative values
-        int width = 0;
-        int height = 0;
+        double max_x = 0;
+        double max_y = 0;
+        double min_x = Integer.MAX_VALUE;
+        double min_y = Integer.MAX_VALUE;
+
         for (int i = 0; i < length; i++) {
             //round up to ints
-            int x = (int)x_data.get(i).toNumericalValue()+1;
-            int y =  (int)y_data.get(i).toNumericalValue()+1;
-            if(x > width) {width = x;}
-            if(y > height){height = y;}
+            double x = x_data.get(i).toNumericalValue();
+            double y =  y_data.get(i).toNumericalValue();
+            if(x > max_x) {max_x = x;}
+            max_x = Math.max(x, max_x);
+            max_y = Math.max(y, max_y);
+
+            min_x = Math.min(x, min_x);
+            min_y = Math.min(y, min_y);
         }
-        Graph graph = new Graph(width * multiplier,height * multiplier);
+
+        int width = (int)((max_x - min_x) * multiplier)+2;
+        int height = (int)((max_y - min_y) * multiplier)+2;
+        Graph graph = new Graph(width ,height);
         for (int i = 0; i < length; i++) {
-            graph.plot(x_data.get(i).toNumericalValue()*multiplier,y_data.get(i).toNumericalValue()*multiplier );
+
+            graph.plot((x_data.get(i).toNumericalValue() - min_x) * multiplier,(y_data.get(i).toNumericalValue() - min_y)*multiplier );
 
         }
         graph.savePNG(filename);

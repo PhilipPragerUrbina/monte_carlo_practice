@@ -22,7 +22,7 @@ public class Graph {
         image.setRGB(x,image.getHeight()-y-1, color.getRGB());//y needs to be reversed for correct orientation
     }
     public void plot(double x, double y){
-        image.setRGB((int)Math.round(x),(int)Math.round(image.getHeight()-y)-1, color.getRGB());//y needs to be reversed for correct orientation
+        image.setRGB((int)Math.round(x),(int)Math.round(image.getHeight()-y - 1), color.getRGB());//y needs to be reversed for correct orientation
     }
 
     //save graph
