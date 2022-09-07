@@ -91,7 +91,7 @@ public class Table {
     }
 
     //multiplier make the graph bigger
-    public void outputPlot(String independent_label, String dependent_label, double multiplier){
+    public void outputPlot(String independent_label, String dependent_label, double multiplier_x, double multiplier_y){
 
         //create filename
         String filename = independent_label + "_" + dependent_label + ".PNG";
@@ -117,14 +117,26 @@ public class Table {
             min_x = Math.min(x, min_x);
             min_y = Math.min(y, min_y);
         }
+        //todo auto scaling
+        //todo lines
+        //todo grid and x and y lines
+        //todo move these things and offset to graph class
 
-        int width = (int)((max_x - min_x) * multiplier)+2;
-        int height = (int)((max_y - min_y) * multiplier)+2;
+        int width = (int)((max_x - min_x) * multiplier_x)+1;
+        int height = (int)((max_y - min_y) * multiplier_y)+1;
         Graph graph = new Graph(width ,height);
         for (int i = 0; i < length; i++) {
 
-            graph.plot((x_data.get(i).toNumericalValue() - min_x) * multiplier,(y_data.get(i).toNumericalValue() - min_y)*multiplier );
+            graph.plot((x_data.get(i).toNumericalValue() - min_x) * multiplier_x,(y_data.get(i).toNumericalValue() - min_y)*multiplier_y );
 
+        }
+        //polt lines
+        graph.setColor(0,0,255);
+        for (int x = 0; x < width ; x++) {
+            graph.plot(x ,(0 - min_y)*multiplier_y );
+        }
+        for (int y = 0; y < height ; y++) {
+            graph.plot((0 - min_x) * multiplier_x,y );
         }
         graph.savePNG(filename);
     }

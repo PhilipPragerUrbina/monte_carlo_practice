@@ -19,10 +19,14 @@ public class Graph {
     }
 
     public void plot(int x, int y){
-        image.setRGB(x,image.getHeight()-y-1, color.getRGB());//y needs to be reversed for correct orientation
+        if(x >= 0 && x < image.getWidth() && y >=0 && y < image.getHeight()){
+            image.setRGB(x,image.getHeight()-y-1, color.getRGB());//y needs to be reversed for correct orientation
+        }
+
     }
     public void plot(double x, double y){
-        image.setRGB((int)Math.round(x),(int)Math.round(image.getHeight()-y - 1), color.getRGB());//y needs to be reversed for correct orientation
+
+        plot((int)Math.round(x),(int)Math.round(y));//y needs to be reversed for correct orientation
     }
 
     //save graph
