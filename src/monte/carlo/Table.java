@@ -40,6 +40,17 @@ public class Table {
         length++;
     }
 
+    public void outputPointsCSV(){
+        //output data
+        for (int i = 0; i <length; i++) {
+            String out = "";
+            for (ArrayList<Data> array : data) {
+                out+= array.get(i).toStringValue() + ",";
+            }
+            out = out.substring(0, out.length()-1);
+            System.out.println(out);
+        }
+    }
 
     //output table
     public void output(){
@@ -90,54 +101,47 @@ public class Table {
         return 0;
     }
 
-    //multiplier make the graph bigger
-    public void outputPlot(String independent_label, String dependent_label, double multiplier_x, double multiplier_y){
+    //resolution scale make the graph bigger, connect will draw lines between points
+    public void outputPlot(String independent_label, String dependent_label,Vector2 resolution_scale, boolean connect){
 
         //create filename
         String filename = independent_label + "_" + dependent_label + ".PNG";
         //get data
         ArrayList<Data> x_data = data[getIDFromLabel(independent_label)];
         ArrayList<Data> y_data = data[getIDFromLabel(dependent_label)];
-
         //find max x and y values for domain and range
-        //todo allow negative values
-        double max_x = 0;
-        double max_y = 0;
-        double min_x = Integer.MAX_VALUE;
-        double min_y = Integer.MAX_VALUE;
-
+         Vector2 max = new Vector2(0);
+         Vector2 min =new Vector2( Integer.MAX_VALUE);
         for (int i = 0; i < length; i++) {
-            //round up to ints
-            double x = x_data.get(i).toNumericalValue();
-            double y =  y_data.get(i).toNumericalValue();
-            if(x > max_x) {max_x = x;}
-            max_x = Math.max(x, max_x);
-            max_y = Math.max(y, max_y);
-
-            min_x = Math.min(x, min_x);
-            min_y = Math.min(y, min_y);
+            Vector2 point = new Vector2(x_data.get(i), y_data.get(i) );
+            max = point.getMax(max);
+            min = point.getMin(min);
         }
-        //todo auto scaling
-        //todo lines
-        //todo grid and x and y lines
-        //todo move these things and offset to graph class
 
-        int width = (int)((max_x - min_x) * multiplier_x)+1;
-        int height = (int)((max_y - min_y) * multiplier_y)+1;
-        Graph graph = new Graph(width ,height);
+        //plot points
+        Graph graph = new Graph(min, max,resolution_scale);
         for (int i = 0; i < length; i++) {
+            graph.plot(x_data.get(i).toNumericalValue(),y_data.get(i).toNumericalValue() );
+         }
 
-            graph.plot((x_data.get(i).toNumericalValue() - min_x) * multiplier_x,(y_data.get(i).toNumericalValue() - min_y)*multiplier_y );
 
+        //connect dots if specified
+        if(connect){
+            graph.setColor(0,255,0);
+            for (int i = 1; i < length; i++) {
+                Vector2 point_a = graph.transformVector(new Vector2(x_data.get(i),y_data.get(i)));
+                Vector2 point_b = graph.transformVector(new Vector2(x_data.get(i-1),y_data.get(i-1)));
+                double slope = (point_b.y-point_a.y)/(point_b.x-point_a.x);
+                for(double j = point_b.x+1; j < point_a.x; j++){
+                    double new_y = slope * (j - point_a.x)  + point_a.y;
+                    graph.pixel(j,new_y);
+                }
+            }
         }
-        //polt lines
+        //plot axis lines
         graph.setColor(0,0,255);
-        for (int x = 0; x < width ; x++) {
-            graph.plot(x ,(0 - min_y)*multiplier_y );
-        }
-        for (int y = 0; y < height ; y++) {
-            graph.plot((0 - min_x) * multiplier_x,y );
-        }
+        graph.drawAxis();
+        //save
         graph.savePNG(filename);
     }
 }

@@ -26,9 +26,19 @@ public class Retakes {
     //test different p values in student_test and put them in table
     public void fillTableStudentTest(double start, double end, double inc){
         table = new Table("P","A_probability");
-        for (double i = start; i < end; i+=0.005) {
+        for (double i = start; i < end; i+=inc) {
             student_p = i;
             table.addDataPoint(new FloatingPointData(i), new FloatingPointData(singleTestExperiment()));
+        }
+    }
+
+    public void fillTable3D(double start_p, double end_p, double inc_p, int start_retakes, int end_retakes, int num_tests){
+        table = new Table("P","Retakes", "A_prob");
+        for (double i = start_p; i < end_p; i+=inc_p) {
+            student_p = i;
+            for (int j = start_retakes; j < end_retakes; j++) {
+                table.addDataPoint(new FloatingPointData(i), new IntData(j), new FloatingPointData(retakeExperiment(num_tests,j)));
+            }
         }
     }
 
