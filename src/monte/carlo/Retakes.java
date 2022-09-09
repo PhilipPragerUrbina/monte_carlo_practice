@@ -1,8 +1,5 @@
 package monte.carlo;
 //class for the "Do retakes make our tests fairer?" problem
-
-
-
 public class Retakes {
 
     //settings
@@ -23,7 +20,7 @@ public class Retakes {
 
     }
 
-    //test different p values in student_test and put them in table
+    //test different p values for a test and put them in table
     public void fillTableStudentTest(double start, double end, double inc){
         table = new Table("P","A_probability");
         for (double i = start; i < end; i+=inc) {
@@ -32,16 +29,18 @@ public class Retakes {
         }
     }
 
+    //fill a table with 3d values, P vs Retakes vs A_probability
     public void fillTable3D(double start_p, double end_p, double inc_p, int start_retakes, int end_retakes, int num_tests){
         table = new Table("P","Retakes", "A_prob");
         for (double i = start_p; i < end_p; i+=inc_p) {
             student_p = i;
             for (int j = start_retakes; j < end_retakes; j++) {
-                table.addDataPoint(new FloatingPointData(i), new IntData(j), new FloatingPointData(retakeExperiment(num_tests,j)));
+                table.addDataPoint(new FloatingPointData(i), new IntData(j), new FloatingPointData(1.0-retakeExperiment(num_tests,j)));
             }
         }
     }
 
+    //fill a table based on # of retakes
     public void fillTableRetakes(int start, int end, int num_tests){
         table = new Table("Retakes","fail_prob");
         for (int i = start; i < end; i++) {

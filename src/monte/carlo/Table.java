@@ -41,6 +41,13 @@ public class Table {
     }
 
     public void outputPointsCSV(){
+        //print labels
+        String header = "";
+        for (String label : labels) {
+           header+= label + ",";
+        }
+        header = header.substring(0, header.length()-1);
+        System.out.println(header);
         //output data
         for (int i = 0; i <length; i++) {
             String out = "";
