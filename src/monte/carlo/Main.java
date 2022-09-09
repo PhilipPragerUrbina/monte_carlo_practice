@@ -6,10 +6,16 @@ public class Main {
 
 
 
-
+/*
         Retakes r = new Retakes(10000,7,85,0.75 );
         r.fillTable3D(0.7,0.9, 0.005, 0, 5,3);
         r.getTable().outputPointsCSV();
+*/
+        TrafficModel m = new TrafficModel(5,999,1000,10,0.3333);
+        for (int i = 0; i < 1000; i++) {
+            m.step();
+            m.print();
+        }
 
 
         /*
