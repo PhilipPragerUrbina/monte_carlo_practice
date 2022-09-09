@@ -70,12 +70,12 @@ public class TrafficModel {
                 new_car.v++;
             }
             //step 2
-            if(new_car.v > Math.abs(next_car.cell - this_car.cell) ){
+            if(new_car.v >= Math.abs(next_car.cell - this_car.cell) ){
                 new_car.v = Math.abs(next_car.cell - this_car.cell)-1;
             }
             //step 3
             if(Math.random() < p && new_car.v > 0){
-                new_car.v = new_car.v - 1;
+                new_car.v--;
             }
 
 
@@ -88,43 +88,70 @@ public class TrafficModel {
 
     }
 
+    //get id of car closest to start of road for displaying the street
+    private int getCarClosestToStart(){
+        int id = 0;
+        int earliest_cell = street_length;
+        for (Car car :
+                cars_now) {
+            if(car.cell < earliest_cell){
+                earliest_cell =car.cell;
+                id = car.id;
+            }
+        }
+        return id;
+    }
+
+    public void graph(int num){
+        Graph g = new Graph(new Vector2(0), new Vector2(street_length, num), new Vector2(1));
+        g.setColor(250,250,250);
+        for (int i = 0; i < num; i++) {
+            for (Car a : cars_now) {
+                g.pixel( a.cell, i);
+            }
+            step();
+        }
+        g.savePNG("test.PNG");
+    }
+
     public void print(){
         //start pos
-        //todo make this the first car based on position on steet not on order
         Car last = new Car(0,0,0);
-
-        for (int i = 0; i < num_cars; i++) {
-            Car current = cars_now[i];
-
+        int start = getCarClosestToStart();
+        for (int i = start; i < num_cars+start; i++) {
+            //loop id
+            int id = i;
+            if(id >= num_cars){
+                id = id - num_cars;
+            }
+            Car current = cars_now[id];
             //output road
-            for (int j = last.cell+1; j < current.cell; j++) {
+            for (int j = last.cell +1 ; j < current.cell; j++) {
                 System.out.print("-");
             }
-
             //output current car
             System.out.print("C");
 
             last =current;
 
         }
+        //end
+        for (int j = last.cell+1 ; j < street_length; j++) {
+            System.out.print("-");
+        }
+
         System.out.println();
     }
 
 
     private Car getCarinFront(Car car){
-        int new_id = car.id + 1;
-        if(new_id == num_cars){
-            new_id = 0;
-        }
+        int new_id = (car.id + 1)%num_cars;
         return cars_now[new_id];
     }
 
     private void moveCar(Car car){
-        int current_cell = car.cell; //get current position
         int next_cell = car.cell + car.v; //get next pos
-        if(next_cell >= street_length){ //loop around
-            next_cell = next_cell - street_length;
-        }
+        next_cell = next_cell % street_length;
         car.cell = next_cell;
     }
 
