@@ -56,7 +56,7 @@ public class TrafficModel {
 
     }
 
-    // step forward simulation, and return number of steps taken
+    // step forward simulation, and return number of steps taken(total car travel distance)
     public int step(){
 
         int total_steps = 0;
@@ -131,13 +131,14 @@ public class TrafficModel {
         int new_id = (car.id + 1)%num_cars;
         return cars_now[new_id];
     }
-    //return number steps taken
+    //move car by its v
     private int moveCar(Car car){
-        int original_pos = car.cell;
         int next_cell = car.cell + car.v; //get next pos
         next_cell = next_cell % num_cells;
         car.cell = next_cell;
-        return car.cell - original_pos;
+
+        //return the distance traveled
+        return car.v;
     }
 
 }
