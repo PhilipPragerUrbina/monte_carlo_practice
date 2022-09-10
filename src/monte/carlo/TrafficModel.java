@@ -27,15 +27,13 @@ public class TrafficModel {
     //settings
     private int max_v;
     private  int num_cars;
-    private int street_length;
-    private int num_simulations;
+    private int num_cells;
     private double p;
 
-    public TrafficModel(int max_v, int num_cars, int street_length, int num_simulations, double p) {
+    public TrafficModel(int max_v, int num_cars, int street_length, double p, boolean even_space) {
         this.max_v = max_v;
         this.num_cars = num_cars;
-        this.street_length = street_length;
-        this.num_simulations = num_simulations;
+        this.num_cells = street_length;
         this.p = p;
         if(num_cars >= street_length){
             System.err.println("k < M!");
@@ -44,24 +42,28 @@ public class TrafficModel {
         //initialize cars
         cars_now = new Car[num_cars];
         cars_after = new Car[num_cars];
+
+
+
         for (int i = 0; i < num_cars; i++) {
-            cars_now[i] = new Car(0, i, i); //make a line of cars
+            if(even_space){
+                cars_now[i] = new Car(0, i * Math.round(num_cells/num_cars), i); //even spaced cars
+            }else{
+                cars_now[i] = new Car(0, i , i); //make a line of cars
+            }
+
         }
 
     }
 
+    // step forward simulation, and return number of steps taken
+    public int step(){
 
-
-    public void step(){
-
-
+        int total_steps = 0;
         for (int i = 0; i < num_cars; i++) {
             Car this_car = cars_now[i];
             Car next_car = getCarinFront(this_car);
-/*
-            if(this_car.v == 0){
-                System.err.println(this_car);
-            }*/
+
 
             Car new_car = new Car(this_car.v,this_car.cell,this_car.id); //create copy of car to apply changes to
 
@@ -70,42 +72,35 @@ public class TrafficModel {
                 new_car.v++;
             }
             //step 2
-            if(new_car.v >= Math.abs(next_car.cell - this_car.cell) ){
-                new_car.v = Math.abs(next_car.cell - this_car.cell)-1;
+            if(new_car.v >= distance(this_car, next_car) ){
+                new_car.v = distance(this_car, next_car)-1;
             }
             //step 3
             if(Math.random() < p && new_car.v > 0){
                 new_car.v--;
+                //do this for more noisy result
+               // new_car.v = new_car.v - (int)(Math.random() * new_car.v);
             }
 
 
            //step 4
-            moveCar(new_car);
+            total_steps += moveCar(new_car);
             cars_after[i] = new_car;
 
         }
         cars_now = cars_after;
-
+        return total_steps;
     }
 
-    //get id of car closest to start of road for displaying the street
-    private int getCarClosestToStart(){
-        int id = 0;
-        int earliest_cell = street_length;
-        for (Car car :
-                cars_now) {
-            if(car.cell < earliest_cell){
-                earliest_cell =car.cell;
-                id = car.id;
-            }
-        }
-        return id;
+    private int distance(Car a, Car b){
+        return Math.abs((a.cell - b.cell)%num_cells)+1;
     }
+
 
     public void graph(int num){
-        Graph g = new Graph(new Vector2(0), new Vector2(street_length, num), new Vector2(1));
+        Graph g = new Graph(new Vector2(0), new Vector2(num_cells, num), new Vector2(1));
         g.setColor(250,250,250);
-        for (int i = 0; i < num; i++) {
+        for (int i = num; i >= 0; i--) {
             for (Car a : cars_now) {
                 g.pixel( a.cell, i);
             }
@@ -115,31 +110,19 @@ public class TrafficModel {
     }
 
     public void print(){
-        //start pos
-        Car last = new Car(0,0,0);
-        int start = getCarClosestToStart();
-        for (int i = start; i < num_cars+start; i++) {
-            //loop id
-            int id = i;
-            if(id >= num_cars){
-                id = id - num_cars;
-            }
-            Car current = cars_now[id];
-            //output road
-            for (int j = last.cell +1 ; j < current.cell; j++) {
-                System.out.print("-");
-            }
-            //output current car
-            System.out.print("C");
 
-            last =current;
 
+        Car[] street = new Car[num_cells];
+        for (Car car : cars_now){
+            street[car.cell] = car;
         }
-        //end
-        for (int j = last.cell+1 ; j < street_length; j++) {
-            System.out.print("-");
+        for (int i = 0; i < num_cells; i++) {
+           if(street[i] != null){
+               System.out.print("Car");
+           }else{
+               System.out.print("-");
+           }
         }
-
         System.out.println();
     }
 
@@ -148,11 +131,13 @@ public class TrafficModel {
         int new_id = (car.id + 1)%num_cars;
         return cars_now[new_id];
     }
-
-    private void moveCar(Car car){
+    //return number steps taken
+    private int moveCar(Car car){
+        int original_pos = car.cell;
         int next_cell = car.cell + car.v; //get next pos
-        next_cell = next_cell % street_length;
+        next_cell = next_cell % num_cells;
         car.cell = next_cell;
+        return car.cell - original_pos;
     }
 
 }

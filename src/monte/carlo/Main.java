@@ -6,16 +6,17 @@ public class Main {
 
 
 
-/*
-        Retakes r = new Retakes(10000,7,85,0.75 );
-        r.fillTable3D(0.7,0.9, 0.005, 0, 5,3);
-        r.getTable().outputPointsCSV();
-*/
-        TrafficModel m = new TrafficModel(5,300,1000,10,0.5);
-        m.graph(2000);
-        for (int i = 0; i < 0; i++) {
-            m.print();
-            m.step();
+        //create graph
+        TrafficModel m = new TrafficModel(5,300,1000,0.3333, true);
+        m.graph(1000);
+        m.graph(4000);
+
+        //create display
+        TrafficModel mm = new TrafficModel(3,20,200,0.3333, false);
+        for (int i = 0; i < 2000; i++) {
+            mm.print();
+            mm.step();
+
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -23,6 +24,12 @@ public class Main {
             }
         }
 
+
+        /*
+        Retakes r = new Retakes(10000,7,85,0.75 );
+        r.fillTable3D(0.7,0.9, 0.005, 0, 5,3);
+        r.getTable().outputPointsCSV();
+*/
 
         /*
         GamblersRuin ruin =  new GamblersRuin(1000);
