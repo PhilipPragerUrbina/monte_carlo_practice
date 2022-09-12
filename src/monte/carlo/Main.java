@@ -4,7 +4,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        TrafficModelComplex s = new TrafficModelComplex(0.3,5,100,10,5,new Vector2(100),10);
 
+/*
         Table data = new Table("k","d");
 
         for (int k = 55; k <= 500; k+=5) {
@@ -26,17 +28,16 @@ public class Main {
             data.addDataPoint(new IntData(k),new FloatingPointData(data_result));
         }
         //data.outputFormatted(20);
-        data.outputPointsCSV();
+        data.outputPointsCSV();*/
 
-
+/*
         //create graph
-        TrafficModel m = new TrafficModel(5,300,1000,0.3333, true);
-        m.graph(1000);
-        m.graph(1000);
+        TrafficModel m = new TrafficModel(3,400,2000,0.5, true);
+        m.graph(8000);
 
         //create display
         TrafficModel mm = new TrafficModel(3,20,200,0.3333, false);
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 10000; i++) {
             mm.print();
             mm.step();
 
@@ -46,7 +47,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
+*/
 
         /*
         Retakes r = new Retakes(10000,7,85,0.75 );

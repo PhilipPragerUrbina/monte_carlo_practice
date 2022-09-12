@@ -72,11 +72,11 @@ public class TrafficModel {
                 new_car.v++;
             }
             //step 2
-            if(new_car.v >= distance(this_car, next_car) ){
+            if( distance(this_car, next_car) < new_car.v ){
                 new_car.v = distance(this_car, next_car)-1;
             }
             //step 3
-            if(Math.random() < p && new_car.v > 0){
+            if( new_car.v > 0 && Math.random() < p){
                 new_car.v--;
                 //do this for more noisy result
                // new_car.v = new_car.v - (int)(Math.random() * new_car.v);
@@ -93,8 +93,23 @@ public class TrafficModel {
     }
 
     private int distance(Car a, Car b){
-        return Math.abs((a.cell - b.cell)%num_cells)+1;
+        return Math.abs((b.cell - a.cell)%num_cells);
     }
+
+    private Car getCarinFront(Car car){
+        int new_id = (car.id + 1)%num_cars;
+        return cars_now[new_id];
+    }
+    //move car by its v
+    private int moveCar(Car car){
+        int next_cell = car.cell + car.v; //get next pos
+        next_cell = next_cell % num_cells;
+        car.cell = next_cell;
+
+        //return the distance traveled
+        return car.v;
+    }
+
 
 
     public void graph(int num){
@@ -127,18 +142,6 @@ public class TrafficModel {
     }
 
 
-    private Car getCarinFront(Car car){
-        int new_id = (car.id + 1)%num_cars;
-        return cars_now[new_id];
-    }
-    //move car by its v
-    private int moveCar(Car car){
-        int next_cell = car.cell + car.v; //get next pos
-        next_cell = next_cell % num_cells;
-        car.cell = next_cell;
 
-        //return the distance traveled
-        return car.v;
-    }
 
 }

@@ -80,6 +80,28 @@ public class Graph {
         }
     }
 
+    //draw line on image(bresenhams line algo, adaptation of code from online)
+    public void drawLine(Vector2 a, Vector2 b){
+        int x0 = (int)Math.round(a.x);
+        int y0 = (int)Math.round(a.y);
+        int x1 = (int)Math.round(b.x);
+        int y1 = (int)Math.round(b.y);
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx-dy;
+        int e2;
+        while (true)
+        {
+            pixel(x0,y0);
+            if (x0 == x1 && y0 == y1) { break;}
+            e2 = 2 * err;
+            if (e2 > -dy) {err = err - dy;x0 = x0 + sx;}
+            if (e2 < dx) {err = err + dx;y0 = y0 + sy;}
+        }
+    }
+
     //save graph
     public void savePNG(String filename){
         File path = new File(filename);
